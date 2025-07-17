@@ -1,4 +1,3 @@
-
 package mental_health_sim;
 
 import javax.swing.*;
@@ -22,6 +21,9 @@ public class MentalHealthUI extends JFrame {
         setLayout(new BorderLayout(10, 10));
 
         String name = JOptionPane.showInputDialog(this, "Hi, what is your name?");
+        if (name == null) {
+            System.exit(0);
+        }
         user = new User(name == null || name.trim().isEmpty() ? "User" : name);
         quoteProvider = new QuoteProvider();
 
@@ -63,13 +65,10 @@ public class MentalHealthUI extends JFrame {
         });
     }
 
-    /**
-     * Runs the entire session flow, starting with the mood quiz.
-     */
     private void startSessionInBackground() {
         String mood = runMoodEvaluationQuiz();
 
-        if (mood != null) { // User completed the quiz
+        if (mood != null) {
             user.addMoodHistory(mood);
             outputArea.setText("Based on your answers, it seems you're feeling: " + mood + "\n\n");
             outputArea.append("Here's a quote for you:\n\"" + quoteProvider.getQuoteForMood(mood) + "\"\n\n");
@@ -85,10 +84,6 @@ public class MentalHealthUI extends JFrame {
         }
     }
 
-    /**
-     * Manages the GUI-based quiz to evaluate the user's mood.
-     * @return The evaluated mood string, or null if the user cancels.
-     */
     private String runMoodEvaluationQuiz() {
         Map<String, Integer> moodScores = new HashMap<>();
         moodScores.put("Happy", 0);
@@ -96,15 +91,13 @@ public class MentalHealthUI extends JFrame {
         moodScores.put("Anxious", 0);
         moodScores.put("Tired", 0);
 
-        // --- Question 1 ---
         String[] q1Options = {"High and vibrant", "A bit low or drained", "Restless and on-edge"};
         int choice = JOptionPane.showOptionDialog(this, "How would you describe your energy level today?", "Question 1", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, q1Options, q1Options[0]);
-        if (choice == -1) return null; // User closed dialog
+        if (choice == -1) return null;
         if (choice == 0) moodScores.merge("Happy", 1, Integer::sum);
         if (choice == 1) {moodScores.merge("Sad", 1, Integer::sum); moodScores.merge("Tired", 1, Integer::sum);}
         if (choice == 2) moodScores.merge("Anxious", 1, Integer::sum);
 
-        // --- Question 2 ---
         String[] q2Options = {"Interested and engaged", "Not really interested", "Too distracted to enjoy them"};
         choice = JOptionPane.showOptionDialog(this, "How have you been feeling about things you usually enjoy?", "Question 2", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, q2Options, q2Options[0]);
         if (choice == -1) return null;
@@ -112,15 +105,13 @@ public class MentalHealthUI extends JFrame {
         if (choice == 1) moodScores.merge("Sad", 1, Integer::sum);
         if (choice == 2) moodScores.merge("Anxious", 1, Integer::sum);
 
-        // --- Question 3 ---
         String[] q3Options = {"Calm and positive", "My mind is racing with worries", "Mostly self-critical or pessimistic"};
         choice = JOptionPane.showOptionDialog(this, "Which statement best describes your thoughts recently?", "Question 3", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, q3Options, q3Options[0]);
         if (choice == -1) return null;
         if (choice == 0) moodScores.merge("Happy", 1, Integer::sum);
-        if (choice == 1) moodScores.merge("Anxious", 2, Integer::sum); // Strong indicator
+        if (choice == 1) moodScores.merge("Anxious", 2, Integer::sum);
         if (choice == 2) moodScores.merge("Sad", 1, Integer::sum);
 
-        // --- Determine final mood ---
         String finalMood = "Okay";
         if (moodScores.get("Anxious") > 1) finalMood = "Anxious";
         else if (moodScores.get("Sad") > 1) finalMood = "Sad";
@@ -136,9 +127,8 @@ public class MentalHealthUI extends JFrame {
         return finalMood;
     }
 
-    // Inner class for handling background exercises (remains the same)
     private class ExerciseWorker extends SwingWorker<Void, String> {
-        // ... This class does not need any changes ...
+
         private final String mood;
 
         public ExerciseWorker(String mood) {

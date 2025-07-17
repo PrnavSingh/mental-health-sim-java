@@ -28,7 +28,7 @@ public class Executer {
                     break;
                 case "3":
                     System.out.println("I hope you had a great session...");
-                    return; // Exits the main method and terminates the program
+                    return; 
                 default:
                     System.out.println("Wrong input try again.");
                     break;

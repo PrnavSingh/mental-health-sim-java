@@ -1,4 +1,4 @@
-// mental_health_sim/Assistant.java
+
 package mental_health_sim;
 
 import java.util.Scanner;
@@ -18,17 +18,17 @@ public class Assistant {
     }
 
     public void startSession(Scanner sc) {
-        // 1. Evaluate the mood using the new question-based method
+
         String mood = mt.evaluateMoodByQuestions(sc, user);
         
         System.out.println("Logging your mood: " + mood);
         user.addMoodHistory(mood);
 
-        // 2. Provide a mood-specific quote
+
         System.out.println("\nHere's something for you:");
         System.out.println("\"" + qp.getQuoteForMood(mood) + "\"\n");
 
-        // 3. Evaluate mood and suggest a relevant activity
+
         evaluateMoodAndSuggestActivity(mood.toLowerCase().trim(), sc);
 
         System.out.println("\nThank you for checking in with yourself!");

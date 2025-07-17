@@ -1,4 +1,3 @@
-// mental_health_sim/QuoteProvider.java
 package mental_health_sim;
 
 import java.util.HashMap;
@@ -17,7 +16,6 @@ public class QuoteProvider {
         "Progress, not perfection."
     };
 
-    // Static block to initialize the categorized quotes
     static {
         moodQuotes.put("sad", new String[]{
             "It's okay to not be okay. This feeling will pass.",
@@ -46,25 +44,13 @@ public class QuoteProvider {
         });
     }
 
-    /**
-     * Gets a quote tailored to the user's mood.
-     * @param mood The user's current mood.
-     * @return A relevant quote string.
-     */
     public String getQuoteForMood(String mood) {
         Random rand = new Random();
-        // Normalize mood input to lowercase to match the keys
         String normalizedMood = mood.toLowerCase().trim();
-        
-        // Get mood-specific quotes, or default quotes if the mood isn't in our map
         String[] quotes = moodQuotes.getOrDefault(normalizedMood, defaultQuotes);
         return quotes[rand.nextInt(quotes.length)];
     }
 
-    /**
-     * Gets a random quote from the default list.
-     * @return A random quote string.
-     */
     public String getRandomQuote() {
         Random rand = new Random();
         return defaultQuotes[rand.nextInt(defaultQuotes.length)];
