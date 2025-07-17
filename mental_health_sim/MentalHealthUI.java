@@ -5,6 +5,8 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.*;
+import java.time.LocalDate;
 
 public class MentalHealthUI extends JFrame {
 
@@ -52,17 +54,35 @@ public class MentalHealthUI extends JFrame {
 
         startSessionButton.addActionListener(e -> startSessionInBackground());
 
-        showHistoryButton.addActionListener(e -> {
-            outputArea.setText("");
-            if (user.getMoodHistory().isEmpty()) {
-                outputArea.append("No mood history recorded yet.");
-            } else {
-                outputArea.append("--- Your Mood History ---\n");
-                for (String mood : user.getMoodHistory()) {
-                    outputArea.append("Mood: " + mood + "\n");
-                }
+        showHistoryButton.addActionListener(e -> loadMoodHistoryFromFile());
+    }
+
+    private void saveMoodToFile(String mood) {
+        try (FileWriter fw = new FileWriter("mood_history.txt", true);
+             BufferedWriter bw = new BufferedWriter(fw)) {
+            bw.write(LocalDate.now() + " - " + mood);
+            bw.newLine();
+        } catch (IOException e) {
+            System.out.println("Error writing mood to file: " + e.getMessage());
+        }
+    }
+
+    private void loadMoodHistoryFromFile() {
+        outputArea.setText("");
+        File file = new File("mood_history.txt");
+        if (!file.exists()) {
+            outputArea.append("No mood history recorded yet.");
+            return;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            outputArea.append("--- Your Mood History ---\n");
+            while ((line = br.readLine()) != null) {
+                outputArea.append("• " + line + "\n");
             }
-        });
+        } catch (IOException e) {
+            outputArea.append("Error reading mood history.");
+        }
     }
 
     private void startSessionInBackground() {
@@ -70,6 +90,7 @@ public class MentalHealthUI extends JFrame {
 
         if (mood != null) {
             user.addMoodHistory(mood);
+            saveMoodToFile(mood);
             outputArea.setText("Based on your answers, it seems you're feeling: " + mood + "\n\n");
             outputArea.append("Here's a quote for you:\n\"" + quoteProvider.getQuoteForMood(mood) + "\"\n\n");
 
