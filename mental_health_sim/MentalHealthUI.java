@@ -8,6 +8,7 @@ import java.util.Map;
 import java.io.*;
 import java.time.LocalDate;
 
+
 public class MentalHealthUI extends JFrame {
 
     private final User user;
