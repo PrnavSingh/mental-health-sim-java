@@ -16,6 +16,7 @@ public class Assistant {
         qp = new QuoteProvider();
         mt = new MoodTracker();
     }
+    
 
     public void startSession(Scanner sc) {
 
